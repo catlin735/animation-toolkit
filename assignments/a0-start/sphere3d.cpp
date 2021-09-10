@@ -30,7 +30,7 @@ class Sphere3D : public atkui::Framework {
   void keyUp(int key, int mods) {
 
     if(key == GLFW_KEY_SPACE) {
-      velocity=abs(agl::randomUnitVector()*vec3(10,10,10));
+      velocity=vec3(agl::random(-1,1),agl::random(),agl::random(-1,1))*vec3(10,10,10);
       //velocity=vec3(10,10,10);
     
 
