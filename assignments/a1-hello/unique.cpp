@@ -119,7 +119,7 @@ class Unique : public atkui::Framework {
       float  moon2_px=300*sin(moon2_theta)+0.28*width();
    //drawSphere(vec3( moon1_px, height()/2,0),100);
    drawSphere(vec3( moon1_px, moon1_py,0),100);
-     setColor(vec3(0,0,0.140-0.1*sin(moon1_theta-0.1)));
+     setColor(vec3(0,0,0.140+0.1*sin(moon1_theta-0.1)));
   drawSphere(vec3( moon2_px, moon1_py,100),100);
   //drawSphere(vec3( moon2_px, height()/2,100),100);
 
@@ -130,7 +130,7 @@ class Unique : public atkui::Framework {
 
     }
 
-  if(elapsedTime()>30) {
+  if(elapsedTime()>100) {
 
    setColor(vec3(0,0,0));
      drawSphere(vec3(width()/2, height()/2,100),2*height());

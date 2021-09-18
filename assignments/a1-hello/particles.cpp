@@ -76,7 +76,7 @@ struct Particle {
 
     for(int i=0;i<100;i++) {
    
-      vec3 velocity=stdvel*((1+agl::random())*10);
+      vec3 velocity=stdvel*((1+agl::random())*3);
      vec3 color=vec3(0.2,0.8,0.2)+vec3(agl::random(-0.2,0.2),agl::random(-0.2,0.2),agl::random(-0.2,0.2));
     array[i]=new Particle(vec3(width()*agl::random(),height()*agl::random(),1),velocity,color);
    
@@ -100,13 +100,12 @@ struct Particle {
 
   vec3 move(Particle &particle) {
     vec3 newPos=particle.getPosition()+particle.getVelocity()*elapsedTime();
-    if(newPos[0]>width() |newPos[1]>height()) {
+    if(newPos[0]>width() |newPos[1]>height() |newPos[1]<0  |newPos[0]<0) {
        newPos=particle.initial;
-      
 
     }
   
-  
+
     particle.setPosition(newPos);
     return particle.getPosition();
   }
