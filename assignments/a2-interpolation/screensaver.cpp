@@ -82,7 +82,7 @@ class Screensaver : public atkui::Framework {
     drawCurve(current);
 
     if(fmod(time*100,3)==0) {
-       // list.push_front(current);
+       list.push_front(current);
     }
   
     if(list.size()>20) {

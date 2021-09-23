@@ -1,5 +1,3 @@
-// copyright 2020, savvy_sine, alinen
-
 #include "agl/window.h"
 #include <string>
 #include <algorithm>
