@@ -60,7 +60,6 @@ class Screensaver : public atkui::Framework {
 
     current.color=randColor();
     
-   // final=randomCurve();
 
     
     time=0;
