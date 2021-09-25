@@ -14,3 +14,10 @@ This shows the particle moving along the path of the curve for 5 seconds, then g
 https://user-images.githubusercontent.com/55900850/134752975-7b5bc4a7-b111-40bf-81f5-071eb7bc0a1d.mov
 
 This shows the screensaver. The initial curve transitions toward the final curve, with previous curves in the path saved to form a trail.
+
+
+
+
+https://user-images.githubusercontent.com/55900850/134753020-4997bd50-ec6d-47c1-af00-1360b31d0b7b.mov
+
+This shows my unique animation, a fourth-degree interpolation with user input.
