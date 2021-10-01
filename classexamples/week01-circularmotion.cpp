@@ -2,39 +2,32 @@
 
 using glm::vec3;
 
-class Sphere2D : public atkui::Framework {
-
-private:
-    float theta;
-    float thetaRate;
-    float r;
-    
+class Example : public atkui::Framework {
  public:
-  Sphere2D() : atkui::Framework(atkui::Orthographic) {
+  Example() : atkui::Framework(atkui::Orthographic) {
   }
 
   virtual void setup() {
-      theta=0.0;
-      thetaRate=0.1;
-      r=250.0;
+      theta = 0.0;
+      thetaRate = 0.2;
+      r = 200.0;
   }
 
   virtual void scene() {
-    // colors are RGB triplets in range [0,1]
-    setColor(vec3(0,1,0));
-    theta+=thetaRate*dt();
-    float px=r*cos(theta);
-    float py=r*sin(theta);
-    drawSphere(vec3(px,py,0),100);
-
+      theta += thetaRate * dt();
+      float px = r * cos(theta) + 0.5 * width();
+      float py = r * sin(theta) + 0.5 * height();
+      setColor(vec3(1, 0, 0));
+      drawSphere(vec3(px, py, 0), 100);
   }
+
+ private:
+  float theta;
+  float thetaRate;
+  float r;
 };
 
-
-
-int main(int argc, char** argv)
-{
-  Sphere2D viewer;
-  viewer.run();
-  return 0;
+int main(int argc, char** argv) {
+  Example example;
+  example.run();
 }

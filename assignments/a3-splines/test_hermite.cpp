@@ -24,9 +24,9 @@ int main()
    }
 
    // test interpolation with clamped endpoints
-   hermite.setClamped(true);
-   hermite.setClampedDirection(vec3(1.0, 0.0, 0.0));
-   hermite.computeControlPoints(keys);
+  // hermite.setClamped(true);
+   //hermite.setClampedDirection(vec3(1.0, 0.0, 0.0));
+  // hermite.computeControlPoints(keys);
 
    vec3 value;
    value = hermite.interpolate(0, 0.0);
