@@ -100,67 +100,54 @@ void Spline::editControlPoint(int id, const glm::vec3& v) {
 
 glm::vec3 Spline::getValue(float t) const {
   glm::vec3 result=glm::vec3(0);
-  if (mDirty) 
-  {
+  if (mDirty) {
     mInterpolator->computeControlPoints(mKeys);
     mDirty = false;
   }
 
-  double u=0;
-  float x=t;
-
-  if(t<0) {
-    return glm::vec3(0);
-  }
-
   if(mKeys.size()>1) {
-     int segment=0;
-    for(int i=0;i<1;i++) {
-      if(t>=getKey(i)[0]) {
-        segment=i;
-      }
-  
-      if(t<getKey(i)[0]) {
-        break;
-      }
-  } 
-
-    if(t>getKey(getNumKeys()-1)[0]) {
-      x=getKey(getNumKeys()-2)[0];
+     double u=0;
+      int segment=0;
+    if(t<getKey(0)[0]) {
+      u=0;
+      segment=0;
+    }
+    else if(t>getKey(getNumKeys()-1)[0]) {
+      u=1;
       segment=getNumSegments()-1;
     }
 
-  
-    u=(x-getKey(segment)[0])/(getKey(segment+1)[0]-getKey(segment))[0];
+    else {
+       
+      for(int i=0;i<getNumKeys()-2;i++) {
+        if(t>=getKey(i)[0]) {
+          segment++;
+          u=(t-getKey(i+1)[0])/(getKey(i+2)[0]-getKey(i+1)[0]);
+        }
+      }
+     
+    }
+     std::string type=getInterpolationType();
+      if(type=="Linear") {
+        InterpolatorLinear* test=new InterpolatorLinear();
+        test->computeControlPoints(mKeys);
+        result=test->interpolate(segment,u);
 
-  if(u>1||u<0) {
-    return glm::vec3(1000,1000,1000);
+      }
+      else if(type=="Hermite") {
+        InterpolatorHermite* test=new InterpolatorHermite();
+        test->computeControlPoints(mKeys);
+        result=test->interpolate(segment,u);
+      }
+      else {
+        InterpolatorCatmullRom* test=new InterpolatorCatmullRom();
+        test->computeControlPoints(mKeys);
+        result=test->interpolate(segment,u);
+      }
   }
-  std::string type=getInterpolationType();
-  if(type=="Linear") {
-    InterpolatorLinear* test=new InterpolatorLinear();
-    result=test->interpolate(segment,u);
+    return result; 
 
-  }
-  else if(type=="Hermite") {
-    InterpolatorHermite* test=new InterpolatorHermite();
-     result=test->interpolate(segment,u);
-
-  }
-  else {
-    InterpolatorCatmullRom* test=new InterpolatorCatmullRom();
-     result=test->interpolate(segment,u);
-
-  }
-
-
-  }
-
-
-  // todo: your code here
-  // compute the segment containing t
-  // compute the value [0, 1] along the segment for interpolation
-  //u=t-ti/ti+1 - ti 
-  return result; 
 }
+
+
 

@@ -18,7 +18,7 @@ public:
        // todo: your code here
        // see: interpolator.h and writeup for details
        int i=segment*3;
-      
+       // return glm::vec3(segment,u,300);
        return castelCubic(getControlPoint(i),getControlPoint(i+1),getControlPoint(i+2),getControlPoint(i+3),(float)u);
     }
 

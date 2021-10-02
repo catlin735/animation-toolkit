@@ -23,16 +23,19 @@ public:
        float h2=-1.0f*t*t+t*t*t;
         float h3=3.0f*t*t+(-2.0f)*t*t*t;
 
-        glm::vec3 p0=getControlPoint(i);
+       glm::vec3 p0=getControlPoint(i);
         glm::vec3 p0Prime=getControlPoint(i+1);
         glm::vec3 p1=getControlPoint(i+2);
-        glm::vec3 p1Prime=getControlPoint(i+3);
+        glm::vec3 p1Prime=getControlPoint(i+3); 
 
-       return p0*h0+p0Prime*h1+p1Prime*h2+p1*h3;
+        
+       // return glm::vec3(segment,u,200);
+
+        return p0*h0+p0Prime*h1+p1Prime*h2+p1*h3;
     }
 
     virtual void computeControlPoints(const std::vector<glm::vec3>& keys) {
-        clearControlPoints();
+    
      
        if(!isClamped()) {
             int size=keys.size();

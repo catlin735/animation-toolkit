@@ -24,9 +24,9 @@ int main()
    }
 
    // test interpolation with clamped endpoints
-  // hermite.setClamped(true);
-   //hermite.setClampedDirection(vec3(1.0, 0.0, 0.0));
-  // hermite.computeControlPoints(keys);
+  hermite.setClamped(true);
+hermite.setClampedDirection(vec3(1.0, 0.0, 0.0));
+hermite.computeControlPoints(keys);
 
    vec3 value;
    value = hermite.interpolate(0, 0.0);
@@ -40,7 +40,8 @@ int main()
 
    // test interpolation with natual endpoints
    hermite.setClamped(false);
-   hermite.computeControlPoints(keys);
+ hermite.computeControlPoints(keys);
+ hermite.makeNaturalSlopes(keys);
 
    value = hermite.interpolate(0, 0.1);
    std::cout << "(natural) interpolate(0, 0) = " << to_string(value) << std::endl;
