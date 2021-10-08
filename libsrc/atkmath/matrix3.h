@@ -42,6 +42,11 @@ public:
     void fromEulerAnglesYZX(const Vector3& anglesRad);
     void fromEulerAnglesZXY(const Vector3& anglesRad);
     void fromEulerAnglesZYX(const Vector3& anglesRad);
+    Matrix3* Rx(const Vector3& angleRad);
+    Matrix3* Ry(const Vector3& angleRad);
+    Matrix3* Rz(const Vector3& angleRad);
+    Matrix3* Ry90(const Vector3& angleRad);
+    Matrix3* Ryn90(const Vector3& angleRad);
 
    void fromAxisAngle(const Vector3& axis, double rad);
    void toAxisAngle(Vector3& axis, double& rad) const;
@@ -58,6 +63,9 @@ public:
     Matrix3& operator /= ( double d );      // division by a constant
     double* operator [] (int i);          // indexing
     const double* operator [] ( int i) const;   // read-only indexing
+  
+
+    
 
     // special functions
     Matrix3 transpose() const;
@@ -82,7 +90,6 @@ public:
     friend Vector3 operator * (const Matrix3& a, const Vector3& v);     // linear transform
     friend Matrix3 operator * (const Matrix3& a, const Matrix3& b); // matrix 3 product
 
-private:
    union
    {
      struct

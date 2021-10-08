@@ -45,6 +45,7 @@ Matrix3::Matrix3(const Vector3& axis, double rad)
 	 fromAxisAngle(axis, rad);
 }
 
+
 Vector3 Matrix3::toEulerAngles(Matrix3::RotOrder roo) const
 {
 	 switch (roo)
@@ -71,6 +72,9 @@ void Matrix3::fromEulerAngles(Matrix3::RotOrder roo, const Vector3& eulerAngles)
 	 case ZYX: fromEulerAnglesZYX(eulerAngles); break;
 	 }
 }
+
+
+
 
 // Conversion with Quaternion
 Quaternion Matrix3::toQuaternion() const
