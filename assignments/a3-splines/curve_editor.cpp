@@ -30,6 +30,54 @@ void CurveEditor::setup() {
 
 void CurveEditor::scene() {
   drawState();
+  setColor(glm::vec3(0,1,0));
+/* 
+   if(mKeys.size()>1) {
+     double u=0;
+      int segment=0;
+    if(t<getKey(0)[0]) {
+      u=0;
+      segment=0;
+    }
+    else if(t>getKey(getNumKeys()-1)[0]) {
+      u=1;
+      segment=getNumSegments()-1;
+    }
+
+    else {
+       
+      for(int i=0;i<getNumKeys()-2;i++) {
+        if(t>=getKey(i)[0]) {
+          segment++;
+          u=(t-getKey(i+1)[0])/(getKey(i+2)[0]-getKey(i+1)[0]);
+        }
+      }
+     
+    }
+     std::string type=getInterpolationType();
+      if(type=="Linear") {
+        InterpolatorLinear* test=new InterpolatorLinear();
+        test->computeControlPoints(mKeys);
+        result=test->interpolate(segment,u);
+
+      }
+      else if(type=="Hermite") {
+        InterpolatorHermite* test=new InterpolatorHermite();
+        test->computeControlPoints(mKeys);
+        result=test->interpolate(segment,u);
+      }
+      else {
+        InterpolatorCatmullRom* test=new InterpolatorCatmullRom();
+        test->computeControlPoints(mKeys);
+        result=test->interpolate(segment,u);
+      }
+      
+    vec3 prev=curve.B0;
+      for(double i=0;i<1;i+=0.01) {
+        vec3 newPos=castelCubic(curve.B0,curve.B1,curve.B2,curve.B3,i);
+        drawLine(prev,newPos);
+        prev=newPos;
+      } */
   // todo: your code here
 }
 
@@ -93,7 +141,7 @@ int CurveEditor::pickPoint(int x, int y) {
     num = mSpline.getNumControlPoints();
   }
 
-  // check data points -- needs to be done before ctrl points
+ /*  // check data points -- needs to be done before ctrl points
   for (int i = 0; mSelected == -1 && i < num; i++) {
     vec3 pt;
     if (mShowControlPoints) {
@@ -110,7 +158,8 @@ int CurveEditor::pickPoint(int x, int y) {
     }
   }
 
-  return -1;
+  return -1; */
+  return 0;
 }
 
 void CurveEditor::mouseUp(int pButton, int state) {
