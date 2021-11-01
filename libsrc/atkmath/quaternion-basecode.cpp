@@ -7,8 +7,35 @@ namespace atkmath {
 
 Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, double t)
 {
-	// TODO
-	return Quaternion(1,0,0,0);
+	double omega=0;
+	double dot=Dot(q0,q1);
+	if(Dot(q0,q1)<-1) {
+		dot=-1;
+	}
+	if(Dot(q0,q1)>1) {
+		dot=1;
+	}
+
+	if(dot>=0) {
+		omega=acos(dot);
+	}
+	else {
+		double dot=Dot(operator *(q0,-1),q1);
+		if(Dot(q0,q1)<-1) {
+			dot=-1;
+		}
+		if(Dot(q0,q1)>1) {
+			dot=1;
+		}
+		omega=acos(dot);
+	}
+
+	if(omega==0) {
+		return q0;
+	}
+	std::cout<<dot;
+	std::cout<<omega;
+	return operator *(q0,sin(omega*(1-t))/sin(omega))+operator *(q1,sin(omega*t)/sin(omega));
 }
 
 void Quaternion::toAxisAngle (Vector3& axis, double& angleRad) const
