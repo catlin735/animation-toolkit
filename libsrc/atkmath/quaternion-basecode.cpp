@@ -207,34 +207,34 @@ void Quaternion::fromMatrix(const Matrix3& rot)
 	double arr[]={w_squared,x_squared,y_squared,z_squared};
 
 
-	double *max=std::max_element(std::begin(arr), std::end(arr));
-
+	std::sort(std::begin(arr), std::end(arr));
+	double max=arr[3];
 	double w=0;
 	double x=0;
 	double y=0;
 	double z=0;
 
 
-	if(*max==w_squared) {
+	if(max==w_squared) {
 
 		w=sqrt(w_squared);
 		x=wx/w;
 		y=wy/w;
 		z=xz/x;
 	}
-	if(*max==x_squared) {
+	if(max==x_squared) {
 		x=sqrt(x_squared);
 		w=wx/x;
 		y=wy/w;
 		z=xz/x;
 	}
-	if(*max==y_squared) {
+	if(max==y_squared) {
 		y=sqrt(y_squared);
 		w=wy/y;
 		x=wx/w;
 		z=xz/x;
 	}
-	if(*max==z_squared) {
+	if(max==z_squared) {
 		z=sqrt(z_squared);
 		x=xz/z;
 		y=yz/z;
