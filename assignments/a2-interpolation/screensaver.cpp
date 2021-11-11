@@ -42,7 +42,7 @@ class Screensaver : public atkui::Framework {
   Curve final;
   Curve current;
   float time;
-  list<Curve>list;
+  std::list<Curve>list;
 
   void setup() {
    

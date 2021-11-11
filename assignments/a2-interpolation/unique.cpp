@@ -41,7 +41,7 @@ class Unique : public atkui::Framework {
   Curve final;
   Curve current;
   float time;
-  list<Curve>list;
+  std::list<Curve>list;
    int _mouseX;
   int _mouseY;
 
