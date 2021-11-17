@@ -32,10 +32,29 @@ public:
    {
       Motion result;
       result.setFramerate(motion.getFramerate());
-
+  
+      
+     
       // todo: your code here
-      Pose pose = motion.getKey(0);
-      result.appendKey(pose);
+      for(int i=0;i<motion.getNumKeys();i++) {
+         Pose pose = motion.getKey(i);
+         Transform root(pose.jointRots[0], pose.rootPos);
+         Transform toOrigin=Transform::Translate(-1.0f*pose.rootPos);
+         Transform startPos;
+         if(i==0) {
+            startPos= Transform::Translate(-1.0f*pose.rootPos);
+         }
+           
+         glm::mat3 currRot=toMat3(pose.jointRots[0]);
+         quat newRot = eulerAngleRO(XYZ, radians(vec3(0,heading, 0)))*glm::inverse(currRot);
+         Transform desired(newRot,pos+pose.rootPos-startPos.t());
+         Transform correct=desired*toOrigin*root;
+         pose.jointRots[0]=correct.r();
+         pose.rootPos=correct.t();
+         result.appendKey(pose);
+
+      }
+     
       
       return result;
    }

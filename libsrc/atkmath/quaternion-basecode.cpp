@@ -203,6 +203,7 @@ void Quaternion::fromMatrix(const Matrix3& rot)
 	double xy=0.25*(rot.m21+rot.m12);
 	double xz=0.25*(rot.m13+rot.m31);
 	double yz=0.25*(rot.m23+rot.m32);
+	double wz=0.25*(rot.m21-rot.m12);
 	
 	double arr[]={w_squared,x_squared,y_squared,z_squared};
 
@@ -220,25 +221,25 @@ void Quaternion::fromMatrix(const Matrix3& rot)
 		w=sqrt(w_squared);
 		x=wx/w;
 		y=wy/w;
-		z=xz/x;
+		z=wz/w;
 	}
 	if(max==x_squared) {
 		x=sqrt(x_squared);
 		w=wx/x;
-		y=wy/w;
+		y=xy/x;
 		z=xz/x;
 	}
 	if(max==y_squared) {
 		y=sqrt(y_squared);
 		w=wy/y;
-		x=wx/w;
-		z=xz/x;
+		x=xy/y;
+		z=yz/y;
 	}
 	if(max==z_squared) {
 		z=sqrt(z_squared);
 		x=xz/z;
 		y=yz/z;
-		w=wx/x;
+		w=wz/z;
 	}
 
 	this->mW = w;

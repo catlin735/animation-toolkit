@@ -22,20 +22,36 @@ public:
    }
 
    Motion ComputeArmOffset(const Motion& motion) {
+      Joint* leftArm = _skeleton.getByName("Beta:LeftArm");
+      Joint* rightArm = _skeleton.getByName("Beta:RightArm");
+     
+      Joint* leftElbow = _skeleton.getByName("Beta:LeftForeArm");
+      Joint* rightElbow = _skeleton.getByName("Beta:RightForeArm");
+
+
       quat leftLocalRot = eulerAngleRO(XYZ, radians(vec3(-53, -88, -33)));
       quat rightLocalRot = eulerAngleRO(XYZ, radians(vec3(14, 88, -33)));
       quat elbowLocalRot = eulerAngleRO(XYZ, radians(vec3(0, 23, 0)));
 
-      Joint* leftArm = _skeleton.getByName("Beta:LeftArm");
-      Joint* rightArm = _skeleton.getByName("Beta:RightArm");
+      quat leftOffset=leftLocalRot*inverse(leftArm->getLocalRotation());
+      quat rightOffset=rightLocalRot*inverse(rightArm->getLocalRotation());
 
-      Joint* leftElbow = _skeleton.getByName("Beta:LeftForeArm");
-      Joint* rightElbow = _skeleton.getByName("Beta:RightForeArm");
 
       Motion result;
       result.setFramerate(motion.getFramerate());
       // todo: your code here
-      result.appendKey(motion.getKey(0));
+       for(int i=0;i<motion.getNumKeys();i++) {
+          result.appendKey(motion.getKey(i));
+      }
+      for(int i=0;i<result.getNumKeys();i++) {
+         Pose prevPose=result.getKey(i);
+         Pose newPose=result.getKey(i);
+         newPose.jointRots[leftArm->getID()]=prevPose.jointRots[leftArm->getID()]*leftOffset;
+         newPose.jointRots[rightArm->getID()]=prevPose.jointRots[rightArm->getID()]*rightOffset;
+         newPose.jointRots[leftElbow->getID()]=prevPose.jointRots[leftElbow->getID()]*elbowLocalRot;
+         newPose.jointRots[rightElbow->getID()]=prevPose.jointRots[rightElbow->getID()]*elbowLocalRot;
+         result.editKey(i,newPose);
+      }
 
       return result;
    }
@@ -50,11 +66,25 @@ public:
 
       Joint* leftElbow = _skeleton.getByName("Beta:LeftForeArm");
       Joint* rightElbow = _skeleton.getByName("Beta:RightForeArm");
-
+      leftArm->setLocalRotation(leftRot);
       Motion result;
       result.setFramerate(motion.getFramerate());
+
+      for(int i=0;i<motion.getNumKeys();i++) {
+         result.appendKey(motion.getKey(i));
+      }
+
+
+      for(int i=0;i<result.getNumKeys();i++) {
+         Pose newPose=result.getKey(i);
+         newPose.jointRots[leftArm->getID()]=leftRot;
+         newPose.jointRots[rightArm->getID()]=rightRot;
+         newPose.jointRots[leftElbow->getID()]=elbowRot;
+         newPose.jointRots[rightElbow->getID()]=elbowRot;
+         result.editKey(i,newPose);
+      }
       // todo: your code here
-      result.appendKey(motion.getKey(0));
+     
 
       return result;
    }

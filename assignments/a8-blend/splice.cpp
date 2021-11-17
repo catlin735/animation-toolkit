@@ -24,12 +24,40 @@ public:
       _splice = spliceUpperBody(_lower, _upper, _alpha);
    }
 
+
    Motion spliceUpperBody(const Motion& lower, const Motion& upper, float alpha)
    {
       Motion result;
       result.setFramerate(lower.getFramerate());
+      
+      Joint* spine=_skeleton.getByID(2);
+      
+      
       // todo: your code here
-      result.appendKey(lower.getKey(0));
+      for(int i=0;i<lower.getNumKeys();i++) {
+      
+         Pose currLower=lower.getKey(i);
+         Pose currUpper=upper.getKey(i);
+         result.appendKey(currLower);
+      }
+
+     for(int i=0;i<result.getNumKeys();i++) {
+         Pose currLower=lower.getKey(i);
+         Pose currUpper=upper.getKey(i);
+         Pose newPose=lower.getKey(i);
+         /* for(int i=0;i<newPose.jointRots.size();i++) {
+           newPose.jointRots[i]=glm::slerp(currLower.jointRots[i], currUpper.jointRots[i],alpha);
+         } */
+        for(int j=2;j<=55;j++) {
+           double id=j;
+           /*  double id=spine->getChildAt(i)->getID();
+            std::cout<<spine->getNumChildren(); */
+           newPose.jointRots[id]=glm::slerp(currLower.jointRots[id], currUpper.jointRots[id],alpha);
+            
+         } 
+         result.editKey(i,newPose);
+      } 
+    
       return result;
    }
 
@@ -40,6 +68,8 @@ public:
       drawer.draw(_skeleton, *this);
       drawText("alpha: "+std::to_string(_alpha), 10, 15);
    }
+
+   
 
    void keyUp(int key, int mods) 
    {
