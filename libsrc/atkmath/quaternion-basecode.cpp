@@ -1,6 +1,7 @@
 #include "atkmath/quaternion.h"
 #include "atkmath/matrix3.h"
 #include "atkmath/vector3.h"
+#include <algorithm>
 using namespace std;
 
 namespace atkmath {
