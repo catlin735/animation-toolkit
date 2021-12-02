@@ -30,33 +30,29 @@ public:
 
    Motion reorient(const Motion& motion, const vec3& pos, float heading)
    {
+     
       Motion result;
-      result.setFramerate(motion.getFramerate());
-  
+		result.setFramerate(motion.getFramerate());
+		Transform t1;
       
-     
-      // todo: your code here
-      for(int i=0;i<motion.getNumKeys();i++) {
-         Pose pose = motion.getKey(i);
-         Transform root(pose.jointRots[0], pose.rootPos);
-         Transform toOrigin=Transform::Translate(-1.0f*pose.rootPos);
-         Transform startPos;
-         if(i==0) {
-            startPos= Transform::Translate(-1.0f*pose.rootPos);
-         }
-           
-         glm::mat3 currRot=toMat3(pose.jointRots[0]);
-         quat newRot = eulerAngleRO(XYZ, radians(vec3(0,heading, 0)))*glm::inverse(currRot);
-         Transform desired(newRot,pos+pose.rootPos-startPos.t());
-         Transform correct=desired*toOrigin*root;
-         pose.jointRots[0]=correct.r();
-         pose.rootPos=correct.t();
-         result.appendKey(pose);
 
-      }
-     
-      
-      return result;
+		for (int i = 0; i < motion.getNumKeys(); i++) {
+			Pose pose = motion.getKey(i);
+			Transform tDesired(glm::angleAxis(heading, vec3(0, 1, 0)), pos);
+			Transform tOrig(pose.jointRots[0], pose.rootPos);
+		
+
+			if (i == 0) {
+				t1 = Transform::Translate(-1.0f*pose.rootPos);
+			}
+			Transform correct = tDesired * t1 * tOrig;
+			pose.rootPos = correct.t();
+			pose.jointRots[0] = correct.r();
+			result.appendKey(pose);
+		}
+
+
+		return result;
    }
 
    void update()

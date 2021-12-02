@@ -11,6 +11,7 @@
 
 using namespace atk;
 using namespace glm;
+using namespace std;
 
 class AIKSimple : public atkui::Framework
 {
@@ -127,6 +128,35 @@ class AIKSimple : public atkui::Framework
   void solveIKTwoLink(Skeleton &skeleton, const vec3 &goalPosition)
   {
     // todo: implement two link IK algorithm
+    Joint *shoulder=skeleton.getByName("Shoulder");
+    Joint *elbow=skeleton.getByName("Elbow");
+    Joint *wrist=skeleton.getByName("Wrist");
+
+    float r=distance(goalPosition,shoulder->getGlobalTranslation());
+    float l1=distance(elbow->getGlobalTranslation(),shoulder->getGlobalTranslation());
+    float l2=distance(elbow->getGlobalTranslation(),wrist->getGlobalTranslation());
+    float lengthStuff=((r*r)-(l1*l1)-(l2*l2))/(-2*l1*l2);
+    float c=glm::clamp(lengthStuff, -1.0f, 1.0f);
+    float phi=acos(c)-M_PI;
+    quat theta2=glm::angleAxis(phi,vec3(0,0,1));
+    elbow->setLocalRotation(theta2);
+
+	
+    float orientationStuff = (-1.0f * l2 * sin(phi)) / r;
+		orientationStuff = glm::clamp(orientationStuff, -1.0f, 1.0f);
+		float angle1 = asin(orientationStuff);
+
+    float beta = atan2(-goalPosition.y, goalPosition.x);
+		float gamma = asin(goalPosition.y/r);
+    quat betaRotation=glm::angleAxis(beta, vec3(0, 1, 0));
+    quat gammaRotation=glm::angleAxis(gamma, vec3(0, 0, 1));
+    quat angle1Rotation=glm::angleAxis(angle1, vec3(0, 0, 1));
+    quat theta1= betaRotation*gammaRotation*angle1Rotation; 
+
+		shoulder->setLocalRotation(theta1); 
+    skeleton.fk();
+   // std::cout<<0;
+   // std::cout<<distance(wrist->getGlobalTranslation(),shoulder->getGlobalTranslation());
   }
 
  private:
@@ -139,5 +169,6 @@ int main(int argc, char **argv)
 {
   AIKSimple viewer;
   viewer.run();
+
   return 0;
 }

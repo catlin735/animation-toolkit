@@ -48,18 +48,18 @@ public:
 
       // Question 3
 
-      Transform F32 =F20.inverse()*F30.inverse(); // transform from frame 3 to frame 2
+      Transform F32 =F20.inverse()*F30; // transform from frame 3 to frame 2
       value = F32.transformPoint(vec3(0));
       if (!once) std::cout << "Position of b3 relative to b2 is " << value << std::endl;
    
       // Question 4
       // Compute a series of transforms that stack Box 2 onto Box 1
-      vec3 d40 = vec3(3,0,-2);
-      float angle40=M_PI*0.75;
-      quat R40 = glm::angleAxis(angle40, vec3(0,0,1));
+      vec3 d40 = vec3(0,2,0);
+      quat R40 = glm::angleAxis(0.0f, vec3(1,0,0));
       Transform F(R40,d40);
+
       setColor(vec3(0.5, 0.5,0.5));
-      drawBox(F * F20);
+      drawBox(F10*F);
 
       once = true;
    }

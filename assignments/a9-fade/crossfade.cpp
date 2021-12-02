@@ -33,11 +33,53 @@ public:
     assert(numBlendFrames > 0);
     assert(numBlendFrames <= motion1_.getNumKeys());
     assert(numBlendFrames <= motion2_.getNumKeys());
-
-    int start1 = motion1_.getNumKeys() - numBlendFrames;
+    blend_.setFramerate(motion1_.getFramerate());
+    int start1 = motion1_.getNumKeys() - numBlendFrames-1;
     int start2 = 0;
 
-    // TODO: Your code here
+     
+    Transform t1;
+    vec3 pos=motion1_.getKey(start1).rootPos;
+    glm::quat rotation=motion1_.getKey(start1).jointRots[0];
+
+		for (int i = 0; i < motion2_.getNumKeys(); i++) {
+			Pose pose = motion2_.getKey(i);
+			Transform tDesired(rotation, pos);
+			Transform tOrig(pose.jointRots[0], pose.rootPos);
+		
+			if (i == 0) {
+				t1 = Transform::Translate(-1.0f*pose.rootPos);
+			}
+			Transform correct = tDesired * t1 * tOrig;
+			pose.rootPos = correct.t();
+			pose.jointRots[0] = correct.r();
+			motion2_.editKey(i,pose);
+		} 
+ 
+
+	
+
+
+  
+    for(int i=0;i<start1-1;i++) {
+      blend_.appendKey(motion1_.getKey(i));
+    } 
+    float alpha=0;
+    double increment=0.25;
+    while(alpha<1) {
+      blend_.appendKey(Pose::Lerp(motion1_.getKey(start1),motion2_.getKey(start2),alpha));
+      alpha+=increment;
+      start1++;
+      start2++;
+    }
+  
+
+    for(int i=numBlendFrames;i<motion2_.getNumKeys();i++) {
+      blend_.appendKey(motion2_.getKey(i));
+    } 
+
+
+    // TODO: Your code here */
   }
 
   void save(const std::string &filename)
