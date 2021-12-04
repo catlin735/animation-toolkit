@@ -99,55 +99,37 @@ void Spline::editControlPoint(int id, const glm::vec3& v) {
 }
 
 glm::vec3 Spline::getValue(float t) const {
-  glm::vec3 result=glm::vec3(0);
   if (mDirty) {
     mInterpolator->computeControlPoints(mKeys);
     mDirty = false;
   }
 
-  if(mKeys.size()>1) {
-     double u=0;
-      int segment=0;
-    if(t<getKey(0)[0]) {
-      u=0;
-      segment=0;
-    }
-    else if(t>getKey(getNumKeys()-1)[0]) {
-      u=1;
-      segment=getNumSegments()-1;
-    }
+  glm::vec3 result=glm::vec3(0,0,0);
+  if (mKeys.size() == 0) {
+    return result;
+	}
+  float a=t;
+  int segment=0;
+	float u=0;
 
-    else {
-       
-      for(int i=0;i<getNumKeys()-2;i++) {
-        if(t>=getKey(i)[0]) {
-          segment++;
-          u=(t-getKey(i+1)[0])/(getKey(i+2)[0]-getKey(i+1)[0]);
-        }
-      }
-     
-    }
-     std::string type=getInterpolationType();
-      if(type=="Linear") {
-        InterpolatorLinear* test=new InterpolatorLinear();
-        test->computeControlPoints(mKeys);
-        result=test->interpolate(segment,u);
+	if(t<getTime(0)) {
+			a=getTime(0);
+	}
+	if (t>getTime(mKeys.size()-1)) {
+			a=getTime(mKeys.size()-1);
+	}
+		
+	for (int i = 0; i < mKeys.size() - 1; i++) {
+	  if (a>=getTime(i)&& a<=getTime(i+1)) {
+				segment=i;
+				u=(a-getTime(i))/(getTime(i+1)-getTime(i));
+			}
+		}
 
-      }
-      else if(type=="Hermite") {
-        InterpolatorHermite* test=new InterpolatorHermite();
-        test->computeControlPoints(mKeys);
-        result=test->interpolate(segment,u);
-      }
-      else {
-        InterpolatorCatmullRom* test=new InterpolatorCatmullRom();
-        test->computeControlPoints(mKeys);
-        result=test->interpolate(segment,u);
-      }
-  }
-    return result; 
+		result=mInterpolator->interpolate(segment, u);
+    return result;
+	}
 
-}
 
 
 

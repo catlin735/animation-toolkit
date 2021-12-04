@@ -19,7 +19,7 @@ public:
         float t=(float)u;
         int i=segment*2;
        float h0=1.0f-3.0f*t*t+2.0f*t*t*t;
-       float h1=t-2.0f*t*t+t*t*t;
+       float h1=t-2*t*t+t*t*t;
        float h2=-1.0f*t*t+t*t*t;
         float h3=3.0f*t*t+(-2.0f)*t*t*t;
 
@@ -35,10 +35,13 @@ public:
     }
 
     virtual void computeControlPoints(const std::vector<glm::vec3>& keys) {
-    
-     
+        mCtrlPoints.clear();
+        if (keys.size() < 2) {
+			return;
+		}
        if(!isClamped()) {
-            int size=keys.size();
+        int size=keys.size();
+       // todo: your code here
         Eigen::MatrixXd A(size, size);
        
         for(int j=0;j<size;j++) {
@@ -86,16 +89,16 @@ public:
         //Make pPrime
         Eigen::MatrixXd pPrime(size, 2); // slopes for each control point
         pPrime = A.inverse() * p;
-      
+
+         pPrime = A.inverse() * p;
         for (int i = 0; i < size; i++) {
-            mCtrlPoints.push_back(keys[i]);
-            glm::vec3 slope=glm::vec3(pPrime(i,0),pPrime(i,1),0);
+             mCtrlPoints.push_back(keys[i]);
+           glm::vec3 slope=glm::vec3(pPrime(i,0),pPrime(i,1),0);
             mCtrlPoints.push_back(slope);
-        }  
+        }
        }
        else {
-              int size=keys.size();
-       // todo: your code here
+        int size=keys.size();
         Eigen::MatrixXd A(size, size);
        
         for(int j=0;j<size;j++) {
@@ -119,12 +122,11 @@ public:
                }
             }
         }
-        A(0,0)=1;
+         A(0,0)=1;
         A(size-1,size-1)=1;
-
-           //Make P
+          //Make P
         Eigen::MatrixXd p(size,2);
-        glm::vec3 vector1=3.0f*(keys[1]-keys[0]);
+        glm::vec3 vector1=getClampDirection();
         p(0,0)=vector1[0];
         p(0,1)=vector1[1];
        
@@ -134,15 +136,17 @@ public:
              p(i,1)=vector[1];
 
          }
-        glm::vec3 vectorLast=3.0f*(keys[size-1]-keys[size-2]);
-        p(size-1,0)=vectorLast[0];
-        p(size-1,1)=vectorLast[1];
+        p(size-1,0)=vector1[0];
+        p(size-1,1)=vector1[1];
 
         //Make pPrime
         Eigen::MatrixXd pPrime(size, 2); // slopes for each control point
         pPrime = A.inverse() * p;
+         /* for (int i = 0; i < size; i++) {
+        std::cout << "slope " << i << " = " << pPrime(i,0) << " " << pPrime(i,1) << std::endl;
+        }  */
         for (int i = 0; i < size; i++) {
-             mCtrlPoints.push_back(keys[i]);
+            mCtrlPoints.push_back(keys[i]);
             glm::vec3 slope=glm::vec3(pPrime(i,0),pPrime(i,1),0);
             mCtrlPoints.push_back(slope);
         }
@@ -199,6 +203,9 @@ public:
         //Make pPrime
         Eigen::MatrixXd pPrime(size, 2); // slopes for each control point
         pPrime = A.inverse() * p;
+         /* for (int i = 0; i < size; i++) {
+        std::cout << "slope " << i << " = " << pPrime(i,0) << " " << pPrime(i,1) << std::endl;
+        }  */
         for (int i = 0; i < size; i++) {
             mCtrlPoints.push_back(keys[i]);
             glm::vec3 slope=glm::vec3(pPrime(i,0),pPrime(i,1),0);
@@ -259,6 +266,13 @@ public:
         pPrime = A.inverse() * p;
         for (int i = 0; i < size; i++) {
         std::cout << "slope " << i << " = " << pPrime(i,0) << " " << pPrime(i,1) << std::endl;
+        } 
+
+         pPrime = A.inverse() * p;
+        for (int i = 0; i < size; i++) {
+             mCtrlPoints.push_back(keys[i]);
+            glm::vec3 slope=glm::vec3(pPrime(i,0),pPrime(i,1),0);
+            mCtrlPoints.push_back(slope);
         }
       
     }

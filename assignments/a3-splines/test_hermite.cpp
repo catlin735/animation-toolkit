@@ -40,8 +40,7 @@ hermite.computeControlPoints(keys);
 
    // test interpolation with natual endpoints
    hermite.setClamped(false);
- hermite.computeControlPoints(keys);
- hermite.makeNaturalSlopes(keys);
+   hermite.computeControlPoints(keys);
 
    value = hermite.interpolate(0, 0.1);
    std::cout << "(natural) interpolate(0, 0) = " << to_string(value) << std::endl;

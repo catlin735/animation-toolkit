@@ -30,6 +30,20 @@ public:
 
    void lookAtTarget(Joint* head, const vec3& target) {
       // TODO: Your code here
+   
+   
+      vec3 globalHeadPos = head->getGlobalTranslation();
+      vec3 globalForward = head->getGlobalRotation() * vec3(0,0,1);
+      vec3 p1=globalHeadPos;
+      vec3 p3=globalHeadPos + globalForward;
+      vec3 r=p3-p1;
+      vec3 e=target-p3;
+      quat curr=head->getGlobalRotation();
+      float phi=atan2(glm::length(glm::cross(r,e)),dot(r,e)+dot(r,r));
+      vec3 axis=glm::cross(r,e)/glm::length(glm::cross(r,e));
+      Transform tDesired(glm::angleAxis(phi, axis)*curr, head->getGlobalTranslation());
+      Transform toLocal=head->getLocal2Global().inverse()*tDesired;
+      head->setLocalRotation(toLocal.r());
       head->fk();
    }
 
