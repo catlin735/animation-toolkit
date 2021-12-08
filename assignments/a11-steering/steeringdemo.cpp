@@ -34,7 +34,7 @@ void ASteeringDemo::scene()
    _character.draw(*this);
 
    setColor(vec3(1,0,0));
-   drawSphere(_target, 10);
+   drawSphere(_target, 20);
 }
 
 void ASteeringDemo::onInitializeGui()

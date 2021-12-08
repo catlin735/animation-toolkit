@@ -21,25 +21,29 @@ class Unique : public atkui::Framework {
       Vector3 particle;
       Vector3 direction;
       float speed=0.25;
+      float theta=0;
 
 
    virtual void setup() {
       centerPos=Vector3(width()/2,height()/2,0);
-      particle=Vector3(centerPos[0]+5*cos(M_PI_4),centerPos[1]+5*sin(M_PI_4),0);
+      particle=Vector3(centerPos[0]+5*cos(theta),centerPos[1]+5*sin(theta),0);
       direction=centerPos-particle;
    
    }
 
    virtual void scene() {
       direction=centerPos-particle;
-      Quaternion q;
-      q.fromAxisAngle(Vector3(0,0,1), M_PI/4);
-      direction=q*direction;
-      float distance= speed * 10*sin(elapsedTime());
-      particle+=(direction/sqrt(direction[0]*direction[0] +direction[1]*direction[1]))*distance;
-
+      vec3 norm=speed*glm::normalize(vec3(direction[0],direction[1],direction[2]));
+  
+      push();
+      translate(glm::normalize(vec3(direction[0],direction[1],direction[2])));
+      rotate(atan2(direction[1], direction[0]), vec3(0, 0, 1));
       setColor(vec3(1,1,1));
       drawSphere(vec3(particle[0],particle[1],particle[2]),10);
+      pop();
+
+
+
 
      
   }
