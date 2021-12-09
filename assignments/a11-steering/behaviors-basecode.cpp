@@ -36,6 +36,8 @@ vec3 ASeek::calculateDesiredVelocity(const ASteerable& actor,
    float maxSpeed=getParam("MaxSpeed");
    vec3 pos=actor.getPosition();
    vec3 desiredVelocity=glm::normalize(target-pos)*maxSpeed;
+   //std::cout<<target;
+   //std::cout<<desiredVelocity;
    return desiredVelocity;
 }
 

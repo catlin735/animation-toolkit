@@ -22,11 +22,15 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
     _derivative{vel,f/m,thetadot,torque/m}
    */
    // Compute _vd and _thetad
+
    _vd=glm::length(veld);
    _thetad=atan2(veld.x,veld.z);
+   std::cout<<_thetad;
    // compute _force and _torque
    _force=_mass * kOriKv *(_vd - glm::length(_vel));
-   _torque=_inertia *(-1.0f*kVelKv*  _thetad + kVelKv * ( _thetad - _state[2]));
+  // _force=_mass * kOriKv *(v - glm::length(_vel));
+
+   _torque=_inertia *(-1.0f*kVelKv*_thetad + kOriKp * ( _thetad - _state[ORI]));
    // find derivative
    _derivative[0]=_vd;
    _derivative[1]= _force/_mass;
@@ -38,12 +42,16 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
    _state[2]= _state[2]+dt*_derivative[2];
    _state[3]= _state[3]+dt*_derivative[3];
    // compute global position and orientation and update _characterRoot
+   
    quat rot = glm::angleAxis(_state[ORI], vec3(0,1,0));
    vec3 localPos(0,0,_state[POS]);
-
    _characterRoot.setT(rot * localPos + _characterRoot.t());
    _characterRoot.setR(rot); 
+     
 }
+  
+
+
 
 // randomize the colors, characters, and animation times here
 void ASteerable::randomizeAppearance()
