@@ -32,6 +32,7 @@ ASeek::ASeek() : ABehavior("Seek")
 vec3 ASeek::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
+  
    float maxSpeed=getParam("MaxSpeed");
    vec3 pos=actor.getPosition();
    vec3 desiredVelocity=glm::normalize(target-pos)*maxSpeed;
@@ -56,7 +57,10 @@ AFlee::AFlee() : ABehavior("Flee")
 vec3 AFlee::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-    return vec3(0,0,0);
+   float maxSpeed=getParam("MaxSpeed");
+   vec3 pos=actor.getPosition();
+   vec3 desiredVelocity=glm::normalize(targetPos-pos)*maxSpeed*-1.0f;
+   return desiredVelocity;
 }
 
 //--------------------------------------------------------------
@@ -78,7 +82,22 @@ AArrival::AArrival() : ABehavior("Arrival")
 vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-    return vec3(0,0,0);
+   /* velocity = truncate(desired velocity, max_speed)
+position = position + velocity
+ 
+function truncate(vector:Vector3D, max:Number) :void {
+    var i :Number;
+    i = max / vector.length;
+    i = i < 1.0 ? i : 1.0;
+    vector.scaleBy(i); 
+}*/
+   float maxSpeed=getParam("MaxSpeed");
+   vec3 pos=actor.getPosition();
+   vec3 desiredVelocity=glm::normalize(targetPos-pos)*maxSpeed*-1.0f;
+   for(int i=0;i<maxSpeed;i++) {
+      
+   }
+   return vec3(0,0,0);
 }
 
 //--------------------------------------------------------------
