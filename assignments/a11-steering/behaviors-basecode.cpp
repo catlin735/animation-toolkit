@@ -1,6 +1,7 @@
 #include "behaviors.h"
 #include "steerable.h"
 #include <cmath>
+#include <algorithm>
 
 using namespace glm;
 using namespace atk;
@@ -36,8 +37,9 @@ vec3 ASeek::calculateDesiredVelocity(const ASteerable& actor,
    float maxSpeed=getParam("MaxSpeed");
    vec3 pos=actor.getPosition();
    vec3 desiredVelocity=glm::normalize(target-pos)*maxSpeed;
-   //std::cout<<target;
-   //std::cout<<desiredVelocity;
+   if(glm::length(target-pos)<10) {
+      return glm::vec3(0,0,0);
+   }
    return desiredVelocity;
 }
 
@@ -84,22 +86,17 @@ AArrival::AArrival() : ABehavior("Arrival")
 vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-   /* velocity = truncate(desired velocity, max_speed)
-position = position + velocity
- 
-function truncate(vector:Vector3D, max:Number) :void {
-    var i :Number;
-    i = max / vector.length;
-    i = i < 1.0 ? i : 1.0;
-    vector.scaleBy(i); 
-}*/
+
    float maxSpeed=getParam("MaxSpeed");
    vec3 pos=actor.getPosition();
-   vec3 desiredVelocity=glm::normalize(targetPos-pos)*maxSpeed*-1.0f;
-   for(int i=0;i<maxSpeed;i++) {
-      
+   vec3 desiredVelocity=glm::normalize(targetPos-pos)*maxSpeed;
+   float distance=glm::length(targetPos-pos);
+   float radius=getParam("TargetRadius");
+   if(distance<radius) {
+      float slowSpeed=maxSpeed*(distance/radius);
+      return glm::normalize(targetPos-pos)*slowSpeed; 
    }
-   return vec3(0,0,0);
+   return desiredVelocity;
 }
 
 //--------------------------------------------------------------
@@ -118,7 +115,23 @@ ADeparture::ADeparture() : ABehavior("Departure")
 vec3 ADeparture::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-   return vec3(0,0,0);
+   float maxSpeed=getParam("MaxSpeed");
+   vec3 pos=actor.getPosition();
+   vec3 desiredVelocity=glm::normalize(targetPos-pos)*maxSpeed;
+   float distance=glm::length(targetPos-pos);
+   float innerR=getParam("InnerRadius");
+   float outerR=getParam("OuterRadius");
+   if(distance>outerR) {
+      return desiredVelocity;
+   }
+   if(distance>innerR && distance<=outerR) {
+         return desiredVelocity;
+   }
+   if(distance<innerR) {
+      float fleeSpeed=-1.0*maxSpeed*(distance/innerR);
+      return glm::normalize(targetPos-pos)*fleeSpeed; 
+   }
+   return desiredVelocity;
 }
 
 //--------------------------------------------------------------
@@ -135,7 +148,21 @@ AAvoid::AAvoid() : ABehavior("Avoid")
 vec3 AAvoid::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-    return vec3(0,0,0);
+   float maxSpeed=getParam("MaxSpeed");
+   vec3 pos=actor.getPosition();
+   float distances[world.getNumObstacles()];
+   for(int i=0;i<world.getNumObstacles();i++) {
+      AObstacle obstacle=world.getObstacle(i);
+      vec3 opos=obstacle.position;
+      distances[i]=glm::length(opos-pos);
+   }
+   float *min=std::min_element(distances,distances+world.getNumObstacles()-1);
+   int index=distances[min-distances];
+   if(*min<world.getObstacle(index).radius+10) {
+      vec3 direction=world.getObstacle(index).position-pos;
+      return glm::normalize(direction)*maxSpeed*-1.0f;
+   }
+    return glm::normalize(targetPos-pos)*maxSpeed;
 }
 //--------------------------------------------------------------
 // Wander behavior
