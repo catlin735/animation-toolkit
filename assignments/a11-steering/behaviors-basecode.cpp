@@ -104,8 +104,8 @@ vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
 
 ADeparture::ADeparture() : ABehavior("Departure") 
 {
-   setParam("InnerRadius", 1);
-   setParam("OuterRadius", 1);
+   setParam("InnerRadius", 500);
+   setParam("OuterRadius", 1000);
    setParam("kDeparture", 1);
 }
 
@@ -117,19 +117,19 @@ vec3 ADeparture::calculateDesiredVelocity(const ASteerable& actor,
 {
    float maxSpeed=getParam("MaxSpeed");
    vec3 pos=actor.getPosition();
-   vec3 desiredVelocity=glm::normalize(targetPos-pos)*maxSpeed;
+   vec3 desiredVelocity=glm::normalize(targetPos-pos)*maxSpeed*-1.0f;
    float distance=glm::length(targetPos-pos);
    float innerR=getParam("InnerRadius");
    float outerR=getParam("OuterRadius");
    if(distance>outerR) {
-      return desiredVelocity;
+      return vec3(0,0,0);
    }
    if(distance>innerR && distance<=outerR) {
          return desiredVelocity;
    }
    if(distance<innerR) {
-      float fleeSpeed=-1.0*maxSpeed*(distance/innerR);
-      return glm::normalize(targetPos-pos)*fleeSpeed; 
+      float fleeSpeed=maxSpeed*(1-(distance/innerR));
+      return glm::normalize(desiredVelocity)*fleeSpeed; 
    }
    return desiredVelocity;
 }
@@ -150,19 +150,32 @@ vec3 AAvoid::calculateDesiredVelocity(const ASteerable& actor,
 {
    float maxSpeed=getParam("MaxSpeed");
    vec3 pos=actor.getPosition();
+   vec3 desiredVelocity=glm::normalize(targetPos-pos)*maxSpeed;
+   vec3 lookAhead=pos+glm::normalize(desiredVelocity)*10.0f;
    float distances[world.getNumObstacles()];
    for(int i=0;i<world.getNumObstacles();i++) {
       AObstacle obstacle=world.getObstacle(i);
       vec3 opos=obstacle.position;
-      distances[i]=glm::length(opos-pos);
+      distances[i]=glm::length(opos-lookAhead);
    }
-   float *min=std::min_element(distances,distances+world.getNumObstacles()-1);
-   int index=distances[min-distances];
-   if(*min<world.getObstacle(index).radius+10) {
-      vec3 direction=world.getObstacle(index).position-pos;
-      return glm::normalize(direction)*maxSpeed*-1.0f;
+   //float *min=std::min_element(distances,distances+world.getNumObstacles()-1);
+   float min = distances[0];
+   int minIndex=0;
+    // search num in inputArray from index 0 to elementCount-1 
+    for(int i = 0; i <world.getNumObstacles(); i++){
+        if(distances[i] < min){
+            min = distances[i];
+            minIndex=i;
+        }
+    }
+   
+   if(min<world.getObstacle(minIndex).radius+10) {
+      vec3 oDistance=world.getObstacle(minIndex).position-pos;
+      float component=glm::dot(oDistance,glm::normalize(desiredVelocity));
+      vec3 direction=oDistance-component*glm::normalize(desiredVelocity);
+      return pos+-1.0f*glm::normalize(direction)*world.getObstacle(minIndex).radius;
    }
-    return glm::normalize(targetPos-pos)*maxSpeed;
+    return desiredVelocity;
 }
 //--------------------------------------------------------------
 // Wander behavior

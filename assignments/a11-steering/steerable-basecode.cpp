@@ -62,8 +62,11 @@ void ASteerable::randomizeAppearance()
    // for _time
 
    // to randomize color, call _drawer.setColor
-
+    _drawer.color=vec3(0.2,0.8,0.2)+vec3(agl::random(-0.5,0.5),agl::random(-0.5,0.5),agl::random(-0.2,0.2));
+    //glm::vec3(0.2,0.8,0.2);
    // to randomize shape, compute random values for _drawer.setJointRadius
+  _drawer.jointRadius= 50.0f*agl::random(10.0f,50.0f);
+  //std::cout<<_drawer.jointRadius;
    // or randomly assign different drawers to have a mix of characters
 }
 
