@@ -12,6 +12,7 @@ public:
    }
 
    void setup() {
+      axes=false;
       Joint* body = new Joint("Body");
       body->setLocalTranslation(vec3(1,2,1)*100.0f);
       body->setLocalRotation(glm::angleAxis(glm::radians<float>(45.0f), vec3(0,1,0)));
@@ -93,11 +94,16 @@ public:
       push();
         
          transform(B);
-         setColor(vec3(1, 1, 1));
-         
-         drawEllipsoid(vec3(0,-30,0), vec3(0,30,0), 10);
-         drawEllipsoid(vec3(40,0,0), vec3(-40,0,0), 10);
-         drawEllipsoid(vec3(0,0,100), vec3(0,0,-100), 10);
+         setColor(vec3(0, 1, 0));
+         if(axes==true) {
+            drawEllipsoid(vec3(0,-30,0), vec3(0,30,0), 10);
+            setColor(vec3(1, 0, 0));
+            drawEllipsoid(vec3(40,0,0), vec3(-40,0,0), 10);
+            setColor(vec3(0, 0, 1));
+            drawEllipsoid(vec3(0,0,200), vec3(0,0,-200), 10);
+
+         }
+        
       pop(); 
      
      
@@ -132,9 +138,15 @@ public:
       pop();
    }
 
+void keyUp(int pKey, int mods) {
+  if (pKey == '1') {
+    axes=!axes;
+  }
+}
+
 private:
    Skeleton skeleton;
-   bool axes = false;
+   bool axes;
 };
 
 

@@ -3,16 +3,16 @@
 using namespace atk;
 using glm::vec3;
 
-class Tentacle : public atkui::Framework {
+class Unique : public atkui::Framework {
 public:
-   Tentacle() : atkui::Framework(atkui::Perspective) {}
-   virtual ~Tentacle() {}
+   Unique() : atkui::Framework(atkui::Perspective) {}
+   virtual ~Unique() {}
    float theta;
-   double thetaRate;
+   float thetaRate;
 
    virtual void setup() {
       lookAt(vec3(200), vec3(0));
-      theta = 0.0;
+      theta = M_PI/3;
       thetaRate = 0.1;
       
       Joint* root  = new Joint("root");
@@ -33,12 +33,24 @@ public:
       _tentacle.addJoint(joint3, joint2);
 
       Joint* joint4  = new Joint("joint4");
-      joint4->setLocalTranslation(vec3(0,50,0));
-      _tentacle.addJoint(joint4, joint3);
+      joint4->setLocalTranslation(vec3(10,0,0));
+      float angle4=1.0f*M_PI/3;
+      joint4->setLocalRotation(glm::angleAxis(angle4, vec3(0, 0, 1)));
+      _tentacle.addJoint(joint4, joint2);
 
        Joint* joint5  = new Joint("joint5");
-      joint5->setLocalTranslation(vec3(0,50,0));
+      joint5->setLocalTranslation(vec3(50,0,0));
       _tentacle.addJoint(joint5, joint4);
+      
+      Joint* joint6  = new Joint("joint6");
+      joint6->setLocalTranslation(vec3(-10,0,0));
+      float angle5=-1.0f*M_PI/3;
+      joint6->setLocalRotation(glm::angleAxis(angle5, vec3(0, 0, 1)));
+      _tentacle.addJoint(joint6, joint2);
+
+       Joint* joint7  = new Joint("joint7");
+      joint7->setLocalTranslation(vec3(-50,0,0));
+      _tentacle.addJoint(joint7, joint6);
 
       _tentacle.fk(); // compute local2global transforms
    }
@@ -51,25 +63,20 @@ public:
       setColor(vec3(0,1,0));
 
       theta += thetaRate * sin(elapsedTime());
-      float angle=M_PI*sin(theta);
+    
+      Joint* wave=_tentacle.getByName("joint4");
+      wave->setLocalRotation(glm::angleAxis(theta, vec3(0, 0, 1)));
+
+      
 
       // todo: loop over all joints and draw
       for(int i=1;i<_tentacle.getNumJoints();i++) {
          Joint* parent=_tentacle.getByID(i)->getParent();
-         float offset=i/M_PI;
-         glm::quat Rot = glm::angleAxis(angle*0.1f+offset*0.1f, vec3(0,0,1));
-         parent->setLocalRotation(Rot);
          Joint* child = _tentacle.getByID(i);
          vec3 globalParentPos = parent->getGlobalTranslation();
          vec3 globalPos = child->getGlobalTranslation();
          drawEllipsoid(globalParentPos, globalPos, 5);
-         //std::cout<<globalPos;
       }
-      /* Joint* parent = _tentacle.getByID(0);
-      Joint* child = _tentacle.getByID(1);
-      vec3 globalParentPos = parent->getGlobalTranslation();
-      vec3 globalPos = child->getGlobalTranslation();
-      drawEllipsoid(globalParentPos, globalPos, 5); */
    }
 
 protected:
@@ -78,7 +85,6 @@ protected:
 
 int main(int argc, char** argv)
 {
-   Tentacle viewer;
+   Unique viewer;
    viewer.run();
 } 
-

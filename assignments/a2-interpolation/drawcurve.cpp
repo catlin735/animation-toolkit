@@ -26,14 +26,7 @@ class DrawCubic : public atkui::Framework
     drawSphere(B1, 10);
     drawSphere(B2, 10);
 
-     setColor(vec3(0,1,0));
-      vec3 prev=B0;
-      for(double t=0;t<1;t+=0.01) {
-       // vec3 newPos=bernstein(B0,B1,B2,B3,t);
-        vec3 newPos=castelCubic(B0,B1,B2,B3,t);
-        drawLine(prev,newPos);
-        prev=newPos;
-      }
+  
   }
 
   float cube(int x) {
@@ -66,11 +59,26 @@ class DrawCubic : public atkui::Framework
   void keyUp(int key, int mod) {
     if (key == GLFW_KEY_1) {
       // draw Bernstein
+      setColor(vec3(0,1,0));
+      vec3 prev=B0;
+      for(double t=0;t<1;t+=0.01) {
+        vec3 newPos=bernstein(B0,B1,B2,B3,t);
+        //vec3 newPos=castelCubic(B0,B1,B2,B3,t);
+        drawLine(prev,newPos);
+        prev=newPos;
+      }
     
     }
     else if (key == GLFW_KEY_2) {
       // draw Casteljau
-
+      setColor(vec3(0,1,0));
+      vec3 prev=B0;
+      for(double t=0;t<1;t+=0.01) {
+       // vec3 newPos=bernstein(B0,B1,B2,B3,t);
+        vec3 newPos=castelCubic(B0,B1,B2,B3,t);
+        drawLine(prev,newPos);
+        prev=newPos;
+      }
     }
   }
 

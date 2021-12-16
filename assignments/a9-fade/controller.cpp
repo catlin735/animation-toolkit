@@ -46,19 +46,20 @@ public:
   
     // TODO: Your code here
   
-/*   vec3 headPos=_skeleton.getByID(6)->getGlobalTranslation();
-  vec3 globalLookPos=headPos;
-  vec3 globalCameraPos=headPos-vec3(300*sin(_heading),-30,300*cos(_heading)); */
+
    
   Pose pose = _walk.getKey(_walk.getKeyID(elapsedTime()));
- //   pose.rootPos=_walk.getKey(0).rootPos+vec3(700*sin(_heading),0,700*cos(_heading));
+ // pose.rootPos=_walk.getKey(0).rootPos;
+  pose.rootPos=_walk.getKey(0).rootPos+vec3(sin(_heading),0,cos(_heading))+vec3(0, 0, 30);
    pose.jointRots[0]=glm::angleAxis(_heading,vec3(0,1,0));
   _walk.editKey(_walk.getKeyID(elapsedTime()),pose); 
 
     // TODO: Override the default camera to follow the character
-    
+  vec3 headPos=_skeleton.getByID(6)->getGlobalTranslation();
+  vec3 globalLookPos=headPos;
+  vec3 globalCameraPos=headPos-vec3(300*sin(_heading),pose.rootPos[1],300*cos(_heading)); 
   
- // lookAt(globalCameraPos, globalLookPos, glm::vec3(0, 1, 0));
+  lookAt(globalCameraPos, globalLookPos, glm::vec3(0, 1, 0));
   
     // update heading when key is down
     if (keyIsDown('D')) _heading -= 0.05;
